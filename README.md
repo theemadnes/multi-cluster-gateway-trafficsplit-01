@@ -122,4 +122,54 @@ EOF
 
 kubectl --context=autopilot-cluster-us-central1 apply -f flop_svc_export.yaml
 kubectl --context=autopilot-cluster-us-east4 apply -f flop_svc_export.yaml
+
+# create multi-cluster gateway
+cat <<EOF > gateway.yaml
+kind: Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+metadata:
+  name: external-http
+  namespace: whereami
+spec:
+  gatewayClassName: gke-l7-global-external-managed-mc
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      kinds:
+      - kind: HTTPRoute
+EOF
+
+kubectl --context=autopilot-cluster-us-central1 apply -f gateway.yaml
+
+# create httpRoute to flip, to test
+cat << EOF > default-httproute.yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: default-httproute
+  namespace: whereami
+spec:
+  parentRefs:
+  - name: external-http
+    namespace: whereami
+  rules:
+  - backendRefs:
+    - group: net.gke.io
+      kind: ServiceImport
+      name: whereami-flip
+      port: 80
+      weight: 50
+    - group: net.gke.io
+      kind: ServiceImport
+      name: whereami-flop
+      port: 80
+      weight: 50
+EOF
+
+kubectl --context=autopilot-cluster-us-central1 apply -f default-httproute.yaml
+
+# test (after finding the right IP)
+watch -n 0.1 'curl http://34.160.168.222 -s | jq "."'
 ```
