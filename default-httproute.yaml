@@ -1,1 +1,21 @@
-[?1049h[22;0;0t[1;49r(B[m[4l[?7h[H[2JEvery 0.1s: cat[1;139Hworkstation-lhh7o7uh: Thu Jun 29 01:38:03 2023[3;1HapiVersion: gateway.networking.k8s.io/v1beta1[4dkind: HTTPRoute[5dmetadata:[6;3Hname: default-httproute[7;3Hnamespace: whereami[8dspec:[9;3HparentRefs:[10;3H- name: external-http[11;5Hnamespace: whereami[12;3Hrules:[13;3H- backendRefs:[14;5H- group: net.gke.io[15;7Hkind: ServiceImport[16;7Hname: whereami-flip[17;7Hport: 80[18;7Hweight: 50[19;5H- group: net.gke.io[20;7Hkind: ServiceImport[21;7Hname: whereami-flop[22;7Hport: 80[23;7Hweight: 50[49;184H[3d[J[49;184H[1;179H4[49;184H[1;179H5[49;184H[1;179H6[49;184H[1;179H7[49;184H[49;1H[?1049l[23;0;0t[?1l>
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: default-httproute
+  namespace: whereami
+spec:
+  parentRefs:
+  - name: external-http
+    namespace: whereami
+  rules:
+  - backendRefs:
+    - group: net.gke.io
+      kind: ServiceImport
+      name: whereami-flip
+      port: 80
+      weight: 50
+    - group: net.gke.io
+      kind: ServiceImport
+      name: whereami-flop
+      port: 80
+      weight: 50
