@@ -1,0 +1,13 @@
+nameSuffix: "-flop"
+namespace: whereami
+commonLabels:
+  app: whereami-flop
+resources:
+- ../base
+patches:
+- path: cm-flag.yaml
+  target:
+    kind: ConfigMap
+- path: service-type.yaml
+  target:
+    kind: Service
