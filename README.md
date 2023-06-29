@@ -99,4 +99,27 @@ EOF
 
 kubectl --context=autopilot-cluster-us-central1 apply -k whereami/flop-variant
 kubectl --context=autopilot-cluster-us-east4 apply -k whereami/flop-variant
+
+# create serviceExports
+cat <<EOF > flip_svc_export.yaml 
+kind: ServiceExport
+apiVersion: net.gke.io/v1
+metadata:
+  name: whereami-flip
+  namespace: whereami
+EOF
+
+kubectl --context=autopilot-cluster-us-central1 apply -f flip_svc_export.yaml
+kubectl --context=autopilot-cluster-us-east4 apply -f flip_svc_export.yaml
+
+cat <<EOF > flop_svc_export.yaml 
+kind: ServiceExport
+apiVersion: net.gke.io/v1
+metadata:
+  name: whereami-flop
+  namespace: whereami
+EOF
+
+kubectl --context=autopilot-cluster-us-central1 apply -f flop_svc_export.yaml
+kubectl --context=autopilot-cluster-us-east4 apply -f flop_svc_export.yaml
 ```
