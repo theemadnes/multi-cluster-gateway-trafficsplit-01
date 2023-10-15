@@ -170,6 +170,8 @@ EOF
 
 kubectl --context=autopilot-cluster-us-central1 apply -f default-httproute.yaml
 
-# test (after finding the right IP)
-watch -n 0.1 'curl http://34.160.168.222 -s | jq "."'
+# test
+export GATEWAY_IP=$(kubectl --context=autopilot-cluster-us-central1 -n whereami get gateway/external-http -o jsonpath='{.status.addresses[0].value}')
+echo $GATEWAY_IP
+watch -n 0.2 'curl http://${GATEWAY_IP} -s | jq'
 ```
